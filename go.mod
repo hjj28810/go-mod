@@ -1,4 +1,4 @@
-module go-mod
+module github.com/hjj28810/go-mod
 
 go 1.19
 

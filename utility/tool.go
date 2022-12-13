@@ -84,3 +84,20 @@ func XMLBodyToObj[T any](data []byte) (result T) {
 	}
 	return result
 }
+
+func SubString(str string, begin, length int) string {
+	rs := []rune(str)
+	lth := len(rs)
+	if begin < 0 {
+		begin = 0
+	}
+	if begin >= lth {
+		begin = lth
+	}
+	end := begin + length
+
+	if end > lth {
+		end = lth
+	}
+	return string(rs[begin:end])
+}

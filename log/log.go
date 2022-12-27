@@ -18,6 +18,22 @@ func SetPath(path string) {
 	glog.SetPath(path)
 }
 
+func DebugLogAsync(title string, content string) {
+	go DebugLog(title, content)
+}
+
+func ErrorLogAsync(title string, content string, logErr error) {
+	go ErrorLog(title, content, logErr)
+}
+
+func InfoLogAsync(title string, content string) {
+	go InfoLog(title, content)
+}
+
+func WarningLogAsync(title string, content string) {
+	go WarningLog(title, content)
+}
+
 func DebugLog(title string, content string) {
 	glog.Debug(ctx, LogInfo{Title: title, Content: content})
 }

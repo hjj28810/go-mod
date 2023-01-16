@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"encoding/xml"
+	"reflect"
 	"strconv"
 	"strings"
 
@@ -55,7 +56,7 @@ func JsonToObj[T any](str string) (result T) {
 	var data []byte = []byte(str)
 	err := json.Unmarshal(data, &result)
 	if nil != err {
-		log.ErrorLogAsync("jsonToObj fail", "", err)
+		log.ErrorLogAsync("jsonToObj fail", reflect.TypeOf(result).Name(), err)
 	}
 	return result
 }
@@ -64,7 +65,7 @@ func XMLToObj[T any](str string) (result T) {
 	var data []byte = []byte(str)
 	err := xml.Unmarshal(data, &result)
 	if nil != err {
-		log.ErrorLogAsync("XMLToObj fail", "", err)
+		log.ErrorLogAsync("XMLToObj fail", reflect.TypeOf(result).Name(), err)
 	}
 	return result
 }
@@ -72,7 +73,7 @@ func XMLToObj[T any](str string) (result T) {
 func JsonBodyToObj[T any](data []byte) (result T) {
 	err := json.Unmarshal(data, &result)
 	if nil != err {
-		log.ErrorLogAsync("jsonBodyToObj fail", "", err)
+		log.ErrorLogAsync("jsonBodyToObj fail", reflect.TypeOf(result).Name(), err)
 	}
 	return result
 }
@@ -80,7 +81,7 @@ func JsonBodyToObj[T any](data []byte) (result T) {
 func XMLBodyToObj[T any](data []byte) (result T) {
 	err := xml.Unmarshal(data, &result)
 	if nil != err {
-		log.ErrorLogAsync("XMLBodyToObj fail", "", err)
+		log.ErrorLogAsync("XMLBodyToObj fail", reflect.TypeOf(result).Name(), err)
 	}
 	return result
 }

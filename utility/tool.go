@@ -37,12 +37,7 @@ func MD5(str string) string {
 }
 
 func ToJson(t interface{}) string {
-	msgBody, err := json.Marshal(t)
-	if nil != err {
-		log.ErrorLogAsync("toJson fail", "", err)
-		panic(err)
-	}
-	return string(msgBody)
+	return string(ToJsonBody(t))
 }
 
 func ToJsonBody(t interface{}) []byte {
@@ -54,24 +49,27 @@ func ToJsonBody(t interface{}) []byte {
 	return msgBody
 }
 
-func JsonToObj[T any](str string) (result T) {
-	var data []byte = []byte(str)
-	err := json.Unmarshal(data, &result)
-	if nil != err {
-		log.ErrorLogAsync("jsonToObj fail", reflect.TypeOf(result).Name(), err)
-		panic(err)
-	}
-	return result
+func ToXML(t interface{}) string {
+	return string(ToXMLBody(t))
 }
 
-func XMLToObj[T any](str string) (result T) {
-	var data []byte = []byte(str)
-	err := xml.Unmarshal(data, &result)
+func ToXMLBody(t interface{}) []byte {
+	msgBody, err := xml.Marshal(t)
 	if nil != err {
-		log.ErrorLogAsync("XMLToObj fail", reflect.TypeOf(result).Name(), err)
+		log.ErrorLogAsync("toXMLBody fail", "", err)
 		panic(err)
 	}
-	return result
+	return msgBody
+}
+
+func JsonToObj[T any](str string) T {
+	var data []byte = []byte(str)
+	return JsonBodyToObj[T](data)
+}
+
+func XMLToObj[T any](str string) T {
+	var data []byte = []byte(str)
+	return XMLBodyToObj[T](data)
 }
 
 func JsonBodyToObj[T any](data []byte) (result T) {

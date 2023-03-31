@@ -12,7 +12,7 @@ import (
 )
 
 func DoHttpBase(url string, method string, data any, headers map[string]string) (result io.ReadCloser) {
-	if _, ok := headers["Content-Type"]; !ok {
+	if _, ok := headers["Content-Type"]; headers != nil && !ok {
 		headers["Content-Type"] = "application/json;charset=utf-8"
 	}
 	client := &http.Client{}

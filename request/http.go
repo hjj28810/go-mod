@@ -5,20 +5,21 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"strings"
 
 	"github.com/hjj28810/go-mod/log"
 	"github.com/hjj28810/go-mod/utility"
 )
 
 func DoHttpBase(url string, method string, data any, headers map[string]string) (result io.ReadCloser) {
+	if _, ok := headers["Content-Type"]; !ok {
+		headers["Content-Type"] = "application/json;charset=utf-8"
+	}
 	client := &http.Client{}
-	request, err := http.NewRequest(method, url, bytes.NewReader(utility.ToJsonBody(data)))
+	request, err := http.NewRequest(method, url, DataReader(data))
 	if err != nil {
 		log.ErrorLogAsync("http request err", "", err)
 		return
-	}
-	if _, ok := headers["Content-Type"]; !ok {
-		request.Header.Add("Content-Type", "application/json;charset=utf-8")
 	}
 	if len(headers) > 0 {
 		for key, value := range headers {
@@ -83,4 +84,23 @@ func (p *GetRequest) AddParam(property string, value string) *GetRequest {
 
 func (p *GetRequest) BuildParams() string {
 	return p.UrlValues.Encode()
+}
+
+func DataReader(data any) io.Reader {
+	var reader io.Reader
+	switch data := data.(type) {
+	case string:
+		reader = StringReader(data)
+	default:
+		reader = JsonReader(data)
+	}
+	return reader
+}
+
+func JsonReader(data any) *bytes.Reader {
+	return bytes.NewReader(utility.ToJsonBody(data))
+}
+
+func StringReader(data string) *strings.Reader {
+	return strings.NewReader(data)
 }

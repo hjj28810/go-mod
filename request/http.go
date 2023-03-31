@@ -57,30 +57,30 @@ func DoHttp(url string, method string, data any, headers map[string]string) stri
 }
 
 type GetRequest struct {
-	urls url.Values
+	UrlValues url.Values
 }
 
 func (p *GetRequest) Init() *GetRequest {
-	p.urls = url.Values{}
+	p.UrlValues = url.Values{}
 	return p
 }
 
 func (p *GetRequest) InitFrom(reqParams *GetRequest) *GetRequest {
 	if reqParams != nil {
-		p.urls = reqParams.urls
+		p.UrlValues = reqParams.UrlValues
 	} else {
-		p.urls = url.Values{}
+		p.UrlValues = url.Values{}
 	}
 	return p
 }
 
 func (p *GetRequest) AddParam(property string, value string) *GetRequest {
 	if property != "" && value != "" {
-		p.urls.Add(property, value)
+		p.UrlValues.Add(property, value)
 	}
 	return p
 }
 
 func (p *GetRequest) BuildParams() string {
-	return p.urls.Encode()
+	return p.UrlValues.Encode()
 }

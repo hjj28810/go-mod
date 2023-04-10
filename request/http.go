@@ -2,9 +2,12 @@ package request
 
 import (
 	"bytes"
+	"fmt"
 	"io"
+	"mime/multipart"
 	"net/http"
 	"net/url"
+	"os"
 	"strings"
 
 	"github.com/hjj28810/go-mod/log"
@@ -33,6 +36,23 @@ func DoHttpBase(url string, method string, data any, headers map[string]string) 
 	}
 
 	return resp.Body
+}
+
+func DownloadFile(url string, ext string) string {
+	file, err := os.CreateTemp("", "file-*"+ext)
+	if err != nil {
+		fmt.Println(err)
+		return ""
+	}
+	defer file.Close()
+	reader := DoHttpBase(url, "GET", nil, nil)
+	defer reader.Close()
+	_, err = io.Copy(file, reader)
+	if err != nil {
+		fmt.Println(err)
+		return ""
+	}
+	return file.Name()
 }
 
 func DoHttpGen[T any](url string, method string, data any, headers map[string]string) T {
@@ -103,4 +123,53 @@ func JsonReader(data any) *bytes.Reader {
 
 func StringReader(data string) *strings.Reader {
 	return strings.NewReader(data)
+}
+
+func BinaryReader(data string) *strings.Reader {
+	return strings.NewReader(data)
+}
+
+func RequestMultiPart[T any](method, url, filePath, mediaType string) T {
+	file, err := os.Open(filePath)
+	if err != nil {
+		panic(err)
+	}
+	defer file.Close()
+
+	// Create a new multipart form
+	body := &bytes.Buffer{}
+	writer := multipart.NewWriter(body)
+
+	// Add the image file to the form
+	part, err := writer.CreateFormFile(mediaType, filePath)
+	if err != nil {
+		panic(err)
+	}
+	io.Copy(part, file)
+
+	// Close the form
+	writer.Close()
+
+	// Create a new HTTP request with the form data
+	req, err := http.NewRequest(method, url, body)
+	if err != nil {
+		panic(err)
+	}
+	req.Header.Set("Content-Type", writer.FormDataContentType())
+
+	// Send the request and get the response
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		panic(err)
+	}
+	defer resp.Body.Close()
+
+	// Read the response body
+	respBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		panic(err)
+	}
+
+	return utility.JsonBodyToObj[T](respBody)
 }

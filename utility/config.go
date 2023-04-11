@@ -31,7 +31,7 @@ func (c configType) ToString() string {
 var instanceOnce sync.Once
 
 // 从配置文件中载入json字符串
-func LoadConfig[T any](path string) T {
+func LoadConfig[T any](path string) (T, error) {
 	buf, err := os.ReadFile(path)
 	if err != nil {
 		fmt.Println("load config conf failed: ", err)
@@ -40,18 +40,19 @@ func LoadConfig[T any](path string) T {
 }
 
 // 初始化 可以运行多次
-func SetConfig[T any](path string) T {
+func SetConfig[T any](path string) (T, error) {
 	return LoadConfig[T](path)
 }
 
 // 初始化，只运行一次
-func InitConfig[T any](path string) T {
+func InitConfig[T any](path string) (T, error) {
 	filePath := GetCurrentPath()
 	var result T
+	var err error
 	instanceOnce.Do(func() {
-		result = LoadConfig[T](filePath + path)
+		result, err = LoadConfig[T](filePath + path)
 	})
-	return result
+	return result, err
 }
 
 func CheckErr(err error) {

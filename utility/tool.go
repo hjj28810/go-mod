@@ -62,32 +62,32 @@ func ToXMLBody(t interface{}) []byte {
 	return msgBody
 }
 
-func JsonToObj[T any](str string) T {
+func JsonToObj[T any](str string) (result T, err error) {
 	var data []byte = []byte(str)
 	return JsonBodyToObj[T](data)
 }
 
-func XMLToObj[T any](str string) T {
+func XMLToObj[T any](str string) (result T, err error) {
 	var data []byte = []byte(str)
 	return XMLBodyToObj[T](data)
 }
 
-func JsonBodyToObj[T any](data []byte) (result T) {
-	err := json.Unmarshal(data, &result)
+func JsonBodyToObj[T any](data []byte) (result T, err error) {
+	err = json.Unmarshal(data, &result)
 	if nil != err {
 		log.ErrorLogAsync("jsonBodyToObj fail", reflect.TypeOf(result).Name(), err)
 		panic(err)
 	}
-	return result
+	return result, err
 }
 
-func XMLBodyToObj[T any](data []byte) (result T) {
-	err := xml.Unmarshal(data, &result)
+func XMLBodyToObj[T any](data []byte) (result T, err error) {
+	err = xml.Unmarshal(data, &result)
 	if nil != err {
 		log.ErrorLogAsync("XMLBodyToObj fail", reflect.TypeOf(result).Name(), err)
 		panic(err)
 	}
-	return result
+	return result, err
 }
 
 func SubString(str string, begin, length int) string {

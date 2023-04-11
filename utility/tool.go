@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"encoding/xml"
+	"fmt"
 	"reflect"
 	"strconv"
 	"strings"
@@ -43,6 +44,7 @@ func ToJson(t interface{}) string {
 func ToJsonBody(t interface{}) []byte {
 	msgBody, err := json.Marshal(t)
 	if nil != err {
+
 		log.ErrorLogAsync("toJsonBody fail", "", err)
 		panic(err)
 	}
@@ -62,32 +64,36 @@ func ToXMLBody(t interface{}) []byte {
 	return msgBody
 }
 
-func JsonToObj[T any](str string) (result T, err error) {
+func JsonToObj[T any](str string) T {
 	var data []byte = []byte(str)
 	return JsonBodyToObj[T](data)
 }
 
-func XMLToObj[T any](str string) (result T, err error) {
+func XMLToObj[T any](str string) T {
 	var data []byte = []byte(str)
 	return XMLBodyToObj[T](data)
 }
 
-func JsonBodyToObj[T any](data []byte) (result T, err error) {
-	err = json.Unmarshal(data, &result)
+func JsonBodyToObj[T any](data []byte) (result T) {
+	err := json.Unmarshal(data, &result)
 	if nil != err {
-		log.ErrorLogAsync("jsonBodyToObj fail", reflect.TypeOf(result).Name(), err)
+		str := string(data)
+		fmt.Println(str)
+		log.ErrorLogAsync("jsonBodyToObj fail--"+reflect.TypeOf(result).Name(), str, err)
 		panic(err)
 	}
-	return result, err
+	return result
 }
 
-func XMLBodyToObj[T any](data []byte) (result T, err error) {
-	err = xml.Unmarshal(data, &result)
+func XMLBodyToObj[T any](data []byte) (result T) {
+	err := xml.Unmarshal(data, &result)
 	if nil != err {
-		log.ErrorLogAsync("XMLBodyToObj fail", reflect.TypeOf(result).Name(), err)
+		str := string(data)
+		fmt.Println(str)
+		log.ErrorLogAsync("XMLBodyToObj fail--"+reflect.TypeOf(result).Name(), str, err)
 		panic(err)
 	}
-	return result, err
+	return result
 }
 
 func SubString(str string, begin, length int) string {

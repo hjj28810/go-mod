@@ -61,13 +61,7 @@ func DoHttpGen[T any](url string, method string, data any, headers map[string]st
 	if err != nil {
 		panic(err)
 	}
-	var result T
-	result, err = utility.JsonBodyToObj[T](body)
-	if err != nil {
-		fmt.Println(string(body))
-		fmt.Println(err)
-	}
-	return result
+	return utility.JsonBodyToObj[T](body)
 }
 
 func DoHttp(url string, method string, data any, headers map[string]string) string {
@@ -173,11 +167,5 @@ func RequestMultiPart[T any](method, url, filePath, mediaType string) T {
 	if err != nil {
 		panic(err)
 	}
-	var result T
-	result, err = utility.JsonBodyToObj[T](respBody)
-	if err != nil {
-		fmt.Println(string(respBody))
-		fmt.Println(err)
-	}
-	return result
+	return utility.JsonBodyToObj[T](respBody)
 }

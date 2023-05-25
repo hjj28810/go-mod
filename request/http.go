@@ -30,6 +30,12 @@ func DoHttpBase(url string, method string, data any, headers map[string]string) 
 		}
 	}
 	resp, err := client.Do(request)
+	if resp.StatusCode != http.StatusOK {
+		log.WarningLogAsync("http do response status", resp.Status)
+		fmt.Println(resp.StatusCode)
+		fmt.Println(resp.Status)
+		return
+	}
 	if err != nil {
 		log.ErrorLogAsync("http do response err", "", err)
 		return
@@ -126,7 +132,7 @@ func BinaryReader(data string) *strings.Reader {
 	return strings.NewReader(data)
 }
 
-func RequestMultiPart[T any](method, url, filePath, mediaType string) T {
+func RequestMultiPart[T any](method, url, filePath, mediaType string, params map[string]string) T {
 	file, err := os.Open(filePath)
 	if err != nil {
 		panic(err)
@@ -144,6 +150,9 @@ func RequestMultiPart[T any](method, url, filePath, mediaType string) T {
 	}
 	io.Copy(part, file)
 
+	for key, val := range params {
+		_ = writer.WriteField(key, val)
+	}
 	// Close the form
 	writer.Close()
 

@@ -132,7 +132,7 @@ func BinaryReader(data string) *strings.Reader {
 	return strings.NewReader(data)
 }
 
-func RequestMultiPart[T any](method, url, filePath, mediaType string, params map[string]string) T {
+func RequestMultiPart[T any](method, url, filePath, mediaType string, params ...map[string]string) T {
 	file, err := os.Open(filePath)
 	if err != nil {
 		panic(err)
@@ -150,9 +150,12 @@ func RequestMultiPart[T any](method, url, filePath, mediaType string, params map
 	}
 	io.Copy(part, file)
 
-	for key, val := range params {
-		_ = writer.WriteField(key, val)
+	if len(params) > 0 {
+		for key, val := range params[0] {
+			_ = writer.WriteField(key, val)
+		}
 	}
+
 	// Close the form
 	writer.Close()
 

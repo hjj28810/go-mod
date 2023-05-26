@@ -162,7 +162,7 @@ func RequestMultiPart[T any](method, url string, fields []MultipartFormField) T 
 			if e != nil {
 				panic(e)
 			}
-			valueReader := bytes.NewReader(utility.ToJsonBody(field.Value))
+			valueReader := bytes.NewReader([]byte(field.Value))
 			if _, e = io.Copy(partWriter, valueReader); e != nil {
 				panic(e)
 			}

@@ -132,27 +132,40 @@ func BinaryReader(data string) *strings.Reader {
 	return strings.NewReader(data)
 }
 
-func RequestMultiPart[T any](method, url, filePath, mediaType string, params ...map[string]string) T {
-	file, err := os.Open(filePath)
-	if err != nil {
-		panic(err)
-	}
-	defer file.Close()
+type MultipartFormField struct {
+	IsMedia bool
+	Name    string
+	Value   string
+}
 
-	// Create a new multipart form
-	body := &bytes.Buffer{}
-	writer := multipart.NewWriter(body)
+func RequestMultiPart[T any](method, url string, fields []MultipartFormField) T {
+	bodyBuf := &bytes.Buffer{}
+	writer := multipart.NewWriter(bodyBuf)
 
-	// Add the image file to the form
-	part, err := writer.CreateFormFile(mediaType, filePath)
-	if err != nil {
-		panic(err)
-	}
-	io.Copy(part, file)
+	for _, field := range fields {
+		if field.IsMedia {
+			fileWriter, e := writer.CreateFormFile(field.Name, field.Value)
+			if e != nil {
+				panic(e)
+			}
+			fh, e := os.Open(field.Value)
+			if e != nil {
+				panic(e)
+			}
+			defer fh.Close()
 
-	if len(params) > 0 {
-		for key, val := range params[0] {
-			_ = writer.WriteField(key, val)
+			if _, e = io.Copy(fileWriter, fh); e != nil {
+				panic(e)
+			}
+		} else {
+			partWriter, e := writer.CreateFormField(field.Name)
+			if e != nil {
+				panic(e)
+			}
+			valueReader := bytes.NewReader(utility.ToJsonBody(field.Value))
+			if _, e = io.Copy(partWriter, valueReader); e != nil {
+				panic(e)
+			}
 		}
 	}
 
@@ -160,7 +173,7 @@ func RequestMultiPart[T any](method, url, filePath, mediaType string, params ...
 	writer.Close()
 
 	// Create a new HTTP request with the form data
-	req, err := http.NewRequest(method, url, body)
+	req, err := http.NewRequest(method, url, bodyBuf)
 	if err != nil {
 		panic(err)
 	}

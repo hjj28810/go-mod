@@ -15,16 +15,16 @@ const (
 	ProdConfig
 )
 
-func (c configType) ToString() string {
+func (c configType) ToString(path string) string {
 	switch c {
 	case DevConfig:
-		return "/config_dev.json"
+		return path + "/config_dev.json"
 	case TestConfig:
-		return "/config_test.json"
+		return path + "/config_test.json"
 	case ProdConfig:
-		return "/config_prod.json"
+		return path + "/config_prod.json"
 	default:
-		return "/config_dev.json"
+		return path + "/config_dev.json"
 	}
 }
 

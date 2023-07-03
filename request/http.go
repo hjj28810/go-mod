@@ -15,6 +15,9 @@ import (
 )
 
 func DoHttpBase(url string, method string, data any, headers map[string]string) (result io.ReadCloser) {
+	if headers == nil {
+		headers = make(map[string]string)
+	}
 	if _, ok := headers["Content-Type"]; headers != nil && !ok {
 		headers["Content-Type"] = "application/json;charset=utf-8"
 	}

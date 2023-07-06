@@ -13,9 +13,10 @@ const (
 	DevConfig configType = iota
 	TestConfig
 	ProdConfig
+	OtherConfig
 )
 
-func (c configType) ToString(path string) string {
+func (c configType) ToPath(path string) string {
 	switch c {
 	case DevConfig:
 		return path + "/config_dev.json"
@@ -24,7 +25,7 @@ func (c configType) ToString(path string) string {
 	case ProdConfig:
 		return path + "/config_prod.json"
 	default:
-		return path + "/config_dev.json"
+		return path
 	}
 }
 

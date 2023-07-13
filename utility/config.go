@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"sync"
 )
 
 type configType int
@@ -29,8 +30,12 @@ func (c configType) ToPath(path string) string {
 }
 
 // 从配置文件中载入json字符串
-func LoadConfig[T any](path string) T {
-	buf, err := os.ReadFile(path)
+func LoadConfig[T any](path string, notDefault ...bool) T {
+	var filePath string
+	if len(notDefault) == 0 || !notDefault[0] {
+		filePath = GetCurrentPath()
+	}
+	buf, err := os.ReadFile(filePath + path)
 	if err != nil {
 		fmt.Println("load config conf failed: ", err)
 	}
@@ -38,19 +43,19 @@ func LoadConfig[T any](path string) T {
 }
 
 // 初始化 可以运行多次
-func SetConfig[T any](path string) T {
-	return LoadConfig[T](path)
+func SetConfig[T any](path string, notDefault ...bool) T {
+	return LoadConfig[T](path, notDefault...)
 }
 
-// var instanceOnce sync.Once
+var instanceOnce sync.Once
 
-// 初始化
-func InitConfig[T any](path string) T {
-	// var result T
-	// instanceOnce.Do(func() {  //只运行一次
-	// 	result = LoadConfig[T](filePath + path)
-	// })
-	return LoadConfig[T](GetCurrentPath() + path)
+// 初始化一次
+func InitConfig[T any](path string, notDefault ...bool) T {
+	var result T
+	instanceOnce.Do(func() {
+		result = LoadConfig[T](path, notDefault...)
+	})
+	return result
 }
 
 func CheckErr(err error) {

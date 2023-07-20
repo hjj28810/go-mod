@@ -14,7 +14,7 @@ func (res *ResponseModel[T]) WithMsg(message string) ResponseModel[T] {
 		Code:       res.Code,
 		Msg:        message,
 		Data:       res.Data,
-		ServerTime: res.ServerTime,
+		ServerTime: time.Now().Unix(),
 	}
 }
 
@@ -24,7 +24,7 @@ func (res *ResponseModel[T]) WithData(data T) ResponseModel[T] {
 		Code:       res.Code,
 		Msg:        res.Msg,
 		Data:       data,
-		ServerTime: res.ServerTime,
+		ServerTime: time.Now().Unix(),
 	}
 }
 

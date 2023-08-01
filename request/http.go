@@ -27,14 +27,15 @@ func DoHttpBase(url string, method string, data any, headers map[string]string) 
 		}
 	}
 	resp, err := client.Do(request)
-	if resp.StatusCode != http.StatusOK {
-		log.WarningLogAsync("http do response status", resp.Status)
-		fmt.Println(resp.StatusCode)
-		fmt.Println(resp.Status)
+	if err != nil {
+		log.ErrorLogAsync("http response err", "", err)
+		fmt.Println(err)
 		return
 	}
-	if err != nil {
-		log.ErrorLogAsync("http do response err", "", err)
+	if resp.StatusCode != http.StatusOK {
+		log.WarningLogAsync("http response status", resp.Status)
+		fmt.Println(resp.StatusCode)
+		fmt.Println(resp.Status)
 		return
 	}
 	return resp.Body

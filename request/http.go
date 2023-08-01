@@ -19,7 +19,7 @@ func DoHttpBase(url string, method string, data any, headers map[string]string) 
 	request, err := http.NewRequest(method, url, DataReader(data))
 	if err != nil {
 		log.ErrorLogAsync("http request err", "", err)
-		return
+		panic(err)
 	}
 	if len(headers) > 0 {
 		for key, value := range headers {
@@ -29,14 +29,13 @@ func DoHttpBase(url string, method string, data any, headers map[string]string) 
 	resp, err := client.Do(request)
 	if err != nil {
 		log.ErrorLogAsync("http response err", "", err)
-		fmt.Println(err)
-		return
+		panic(err)
 	}
 	if resp.StatusCode != http.StatusOK {
 		log.WarningLogAsync("http response status", resp.Status)
 		fmt.Println(resp.StatusCode)
 		fmt.Println(resp.Status)
-		return
+		panic(err)
 	}
 	return resp.Body
 }

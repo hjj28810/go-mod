@@ -45,4 +45,8 @@ func (t DateTime) String() string {
 	return time.Time(t).Format(TimeLayout)
 }
 
+func (t DateTime) Time() time.Time {
+	return time.Time(t)
+}
+
 var TimeLayout string = "2006-01-02 15:04:05"

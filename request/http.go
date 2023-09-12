@@ -16,7 +16,11 @@ import (
 
 func DoHttpBase(url string, method string, data any, headers map[string]string) (result io.ReadCloser) {
 	client := &http.Client{}
-	request, err := http.NewRequest(method, url, DataReader(data))
+	var bodyReader io.Reader = nil
+	if data != nil {
+		bodyReader = DataReader(data)
+	}
+	request, err := http.NewRequest(method, url, bodyReader)
 	if err != nil {
 		log.ErrorLogAsync("http request err", "", err)
 		panic(err)

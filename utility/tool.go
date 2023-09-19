@@ -151,9 +151,9 @@ func SubMonth(t1, t2 time.Time) (month int) {
 	return
 }
 
-func RSADecrypt(ciphertext, privateKeyStr string) string {
+func RSADecrypt(ciphertext string, privateKeyArr []byte) string {
 	// Parse the PEM-encoded private key
-	block, _ := pem.Decode([]byte(privateKeyStr))
+	block, _ := pem.Decode(privateKeyArr)
 	privateKey, _ := x509.ParsePKCS1PrivateKey(block.Bytes)
 
 	// Decrypt the ciphertext using the private key
@@ -165,8 +165,8 @@ func RSADecrypt(ciphertext, privateKeyStr string) string {
 	return string(plaintext)
 }
 
-func RSAEncrypt(plaintext, publicKeyStr string) string {
-	block, _ := pem.Decode([]byte(publicKeyStr))
+func RSAEncrypt(plaintext string, publicKeyArr []byte) string {
+	block, _ := pem.Decode(publicKeyArr)
 	publicKey, _ := x509.ParsePKCS1PublicKey(block.Bytes)
 	ciphertext, err := rsa.EncryptPKCS1v15(rand.Reader, publicKey, []byte(plaintext))
 	if err != nil {

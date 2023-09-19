@@ -2,10 +2,15 @@ package utility
 
 import (
 	"crypto/md5"
+	"crypto/rand"
+	"crypto/rsa"
+	"crypto/x509"
 	"encoding/hex"
 	"encoding/json"
+	"encoding/pem"
 	"encoding/xml"
 	"fmt"
+	"os"
 	"reflect"
 	"strconv"
 	"strings"
@@ -144,4 +149,38 @@ func SubMonth(t1, t2 time.Time) (month int) {
 	monthInterval %= 12
 	month = yearInterval*12 + monthInterval
 	return
+}
+
+func RSADecrypt(ciphertext, privateKeyStr string) string {
+	// Parse the PEM-encoded private key
+	block, _ := pem.Decode([]byte(privateKeyStr))
+	privateKey, _ := x509.ParsePKCS1PrivateKey(block.Bytes)
+
+	// Decrypt the ciphertext using the private key
+	plaintext, err := rsa.DecryptPKCS1v15(rand.Reader, privateKey, []byte(ciphertext))
+	if err != nil {
+		fmt.Println("Error decrypting ciphertext:", err)
+		return ""
+	}
+	return string(plaintext)
+}
+
+func RSAEncrypt(plaintext, publicKeyStr string) string {
+	block, _ := pem.Decode([]byte(publicKeyStr))
+	publicKey, _ := x509.ParsePKCS1PublicKey(block.Bytes)
+	ciphertext, err := rsa.EncryptPKCS1v15(rand.Reader, publicKey, []byte(plaintext))
+	if err != nil {
+		fmt.Println("Failed to encrypt message:", err)
+		return ""
+	}
+	return string(ciphertext)
+}
+
+func ReadFile(path string) []byte {
+	pemData, err := os.ReadFile("path/to/file.pem")
+	if err != nil {
+		fmt.Println("无法读取 PEM 文件:", err)
+		return []byte("")
+	}
+	return pemData
 }

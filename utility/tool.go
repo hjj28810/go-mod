@@ -177,9 +177,9 @@ func RSAEncrypt(plaintext string, publicKeyArr []byte) string {
 }
 
 func ReadFile(path string) []byte {
-	pemData, err := os.ReadFile("path/to/file.pem")
+	pemData, err := os.ReadFile(path)
 	if err != nil {
-		fmt.Println("无法读取 PEM 文件:", err)
+		fmt.Println("无法读取文件:", err)
 		return []byte("")
 	}
 	return pemData

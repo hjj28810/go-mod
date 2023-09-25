@@ -5,6 +5,7 @@ import (
 	"crypto/rand"
 	"crypto/rsa"
 	"crypto/x509"
+	"encoding/base64"
 	"encoding/hex"
 	"encoding/json"
 	"encoding/pem"
@@ -151,27 +152,36 @@ func SubMonth(t1, t2 time.Time) (month int) {
 	return
 }
 
-func RSADecrypt(ciphertext string, privateKeyArr []byte) string {
+func RSADecrypt(ciphertext, privateKeyArr []byte) []byte {
 	block, _ := pem.Decode(privateKeyArr)
 	privateKey, _ := x509.ParsePKCS1PrivateKey(block.Bytes)
-	plaintext, err := rsa.DecryptPKCS1v15(rand.Reader, privateKey, []byte(ciphertext))
+	plaintext, err := rsa.DecryptPKCS1v15(rand.Reader, privateKey, ciphertext)
 	if err != nil {
 		fmt.Println("Error decrypting ciphertext:", err)
-		return ""
+		return nil
 	}
-	return string(plaintext)
+	return plaintext
 }
 
-func RSAEncrypt(plaintext string, publicKeyArr []byte) string {
+func RSADecryptBase64(ciphertext string, privateKeyArr []byte) string {
+	decodeBytes, _ := base64.StdEncoding.DecodeString(ciphertext)
+	return string(RSADecrypt(decodeBytes, privateKeyArr))
+}
+
+func RSAEncrypt(plaintext, publicKeyArr []byte) []byte {
 	block, _ := pem.Decode(publicKeyArr)
 	publicKey, _ := x509.ParsePKIXPublicKey(block.Bytes)
 	rsaKey, _ := publicKey.(*rsa.PublicKey)
-	ciphertext, err := rsa.EncryptPKCS1v15(rand.Reader, rsaKey, []byte(plaintext))
+	ciphertext, err := rsa.EncryptPKCS1v15(rand.Reader, rsaKey, plaintext)
 	if err != nil {
 		fmt.Println("Failed to encrypt message:", err)
-		return ""
+		return nil
 	}
-	return string(ciphertext)
+	return ciphertext
+}
+
+func RSAEncryptBase64(plaintext string, publicKeyArr []byte) string {
+	return base64.StdEncoding.EncodeToString(RSAEncrypt([]byte(plaintext), publicKeyArr))
 }
 
 func ReadFile(path string) []byte {

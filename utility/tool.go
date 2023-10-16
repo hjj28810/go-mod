@@ -121,12 +121,12 @@ func SubString(str string, begin, length int) string {
 	return string(rs[begin:end])
 }
 
-func StringToTime(timeValue string) time.Time {
+func StringToTime(timeValue string) (time.Time, error) {
 	timestamp, err := time.ParseInLocation(model.TimeLayout, timeValue, time.Local)
 	if err != nil {
 		fmt.Println("时间转换错误", err)
 	}
-	return timestamp
+	return timestamp, err
 }
 
 func SubMonth(t1, t2 time.Time) (month int) {

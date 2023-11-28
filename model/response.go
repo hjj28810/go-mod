@@ -9,6 +9,13 @@ type ResponseModel[T any] struct {
 	ServerTime int64  `json:"serverTime"`
 }
 
+type PageResponseModel[T any] struct {
+	Page     int   `json:"page"`
+	PageSize int   `json:"pageSize"`
+	List     []T   `json:"list"`
+	Total    int64 `json:"total"`
+}
+
 func (res *ResponseModel[T]) WithMsg(message string) ResponseModel[T] {
 	return ResponseModel[T]{
 		Code:       res.Code,

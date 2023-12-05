@@ -44,6 +44,7 @@ func BaseResponse(code int, msg string) *ResponseModel[interface{}] {
 }
 
 var (
-	ResponseOK  = BaseResponse(200, "ok")  // 通用成功
-	ResponseErr = BaseResponse(500, "err") // 通用错误
+	ResponseOK        = BaseResponse(200, "ok")         // 通用成功
+	ResponseErr       = BaseResponse(500, "err")        // 通用错误
+	ResponseNeedLogin = BaseResponse(401, "need login") // 没有权限
 )

@@ -52,9 +52,7 @@ func ToJson(t interface{}) string {
 func ToJsonBody(t interface{}) []byte {
 	msgBody, err := json.Marshal(t)
 	if nil != err {
-
 		log.ErrorLogAsync("toJsonBody fail", "", err)
-		panic(err)
 	}
 	return msgBody
 }
@@ -67,7 +65,6 @@ func ToXMLBody(t interface{}) []byte {
 	msgBody, err := xml.Marshal(t)
 	if nil != err {
 		log.ErrorLogAsync("toXMLBody fail", "", err)
-		panic(err)
 	}
 	return msgBody
 }
@@ -88,7 +85,6 @@ func JsonBodyToObj[T any](data []byte) (result T) {
 		str := string(data)
 		fmt.Println(str)
 		log.ErrorLogAsync("jsonBodyToObj fail--"+reflect.TypeOf(result).Name(), str, err)
-		panic(err)
 	}
 	return result
 }
@@ -99,7 +95,6 @@ func XMLBodyToObj[T any](data []byte) (result T) {
 		str := string(data)
 		fmt.Println(str)
 		log.ErrorLogAsync("XMLBodyToObj fail--"+reflect.TypeOf(result).Name(), str, err)
-		panic(err)
 	}
 	return result
 }

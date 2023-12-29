@@ -116,6 +116,10 @@ func SubString(str string, begin, length int) string {
 	return string(rs[begin:end])
 }
 
+func StrLen(str string) int {
+	return len([]rune(str))
+}
+
 func StringToTime(timeValue string) (time.Time, error) {
 	timestamp, err := time.ParseInLocation(model.TimeLayout, timeValue, time.Local)
 	if err != nil {

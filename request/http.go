@@ -112,6 +112,8 @@ func DataReader(data any) io.Reader {
 	switch data := data.(type) {
 	case string:
 		reader = StringReader(data)
+	case url.Values:
+		reader = FormReader(data)
 	default:
 		reader = JsonReader(data)
 	}
@@ -119,15 +121,19 @@ func DataReader(data any) io.Reader {
 }
 
 func JsonReader(data any) *bytes.Reader {
-	return bytes.NewReader(utility.ToJsonBody(data))
+	return BinaryReader(utility.ToJsonBody(data))
 }
 
 func StringReader(data string) *strings.Reader {
 	return strings.NewReader(data)
 }
 
-func BinaryReader(data string) *strings.Reader {
-	return strings.NewReader(data)
+func FormReader(data url.Values) *bytes.Reader {
+	return BinaryReader([]byte(data.Encode()))
+}
+
+func BinaryReader(data []byte) *bytes.Reader {
+	return bytes.NewReader(data)
 }
 
 type MultipartFormField struct {

@@ -412,9 +412,6 @@ func (p *ProcessCmdStream) ToExcel() *ProcessCmdStream {
 		}
 
 		p.Error = f.SaveAs(p.Path)
-		if err != nil {
-			return p
-		}
 		return p
 	}
 	p.Error = f.Write(p.writer)

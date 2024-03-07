@@ -16,6 +16,14 @@ func (t *DateTime) UnmarshalJSON(data []byte) (err error) {
 	// 指定解析的格式
 	if now, err := time.ParseInLocation(`"`+TimeLayout+`"`, string(data), time.Local); err == nil {
 		*t = DateTime(now)
+	} else {
+		if now1, err1 := time.ParseInLocation(`"`+TimeLayoutShort+`"`, string(data), time.Local); err1 == nil {
+			*t = DateTime(now1)
+		} else {
+			if now2, err2 := time.ParseInLocation(`"`+DateLayoutShort+`"`, string(data), time.Local); err2 == nil {
+				*t = DateTime(now2)
+			}
+		}
 	}
 	return
 }
@@ -50,3 +58,7 @@ func (t DateTime) Time() time.Time {
 }
 
 var TimeLayout string = "2006-01-02 15:04:05"
+
+var TimeLayoutShort string = "2006-01-02"
+
+var DateLayoutShort string = "20060102"
